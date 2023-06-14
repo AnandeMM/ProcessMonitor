@@ -1,0 +1,5 @@
+﻿ProcessMonitor/bin
+ProcessMonitor.Tests/bin
+ProcessMonitor.Tests/obj
+ProcessMonitor/obj
+.vs
