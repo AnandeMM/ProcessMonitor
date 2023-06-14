@@ -7,25 +7,20 @@ using ProcessMonitor.Services;
 using System.Net;
 
 var processName = args[0];
-var isLifetimeValid = Double.TryParse(args[1], out var lifetime);
+var isLifetimeValid = Double.TryParse(args[1], out var maxLifetime);
 var isMonitorFrequencyValid = Double.TryParse(args[2], out var monitorFrequency);
 
 IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
     services =>
     {
         services.AddSingleton<IProcessService, ProcessService>();
+        services.AddSingleton<IProcessMonitor, ProcessMonitor.Services.Monitor>();
     }
     ).Build();
 
-var _processService = _host.Services.GetRequiredService<IProcessService>();
+var _processMonitor = _host.Services.GetRequiredService<IProcessMonitor>();
 
-var timer = new PeriodicTimer(TimeSpan.FromMinutes(monitorFrequency));
-while (await timer.WaitForNextTickAsync(CancellationToken.None))
-{
-    var processes = _processService.GetByName(processName);
-    processes.ToList().ForEach(p =>
-    {
-        if(_processService.ShouldBeKilled(p, lifetime))
-            _processService.Kill(p);
-    });
-}
+await _processMonitor.Execute(processName, maxLifetime, monitorFrequency);
+
+
+

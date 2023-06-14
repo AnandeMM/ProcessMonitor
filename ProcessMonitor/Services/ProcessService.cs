@@ -27,9 +27,15 @@ public class ProcessService : IProcessService
         return Process.GetProcessesByName(processName);
     }
 
-    public bool ShouldBeKilled(Process process, double lifetime)
+    public DateTime GetStartTimeById(int processId)
     {
-        TimeSpan runningTime = DateTime.Now - process.StartTime;
+
+        return Process.GetProcessById(processId).StartTime;
+    }
+
+    public bool ShouldBeKilled(DateTime startTime, double lifetime)
+    {
+        TimeSpan runningTime = DateTime.Now - startTime;
         return runningTime.TotalMinutes >= lifetime;
     }
 }

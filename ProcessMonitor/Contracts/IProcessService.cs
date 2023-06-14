@@ -12,8 +12,9 @@ public interface IProcessService
     bool Exists(string processName);
     void Kill(Process process);
 
-    bool ShouldBeKilled(Process process, double lifetime);
+    bool ShouldBeKilled(DateTime startTime, double lifetime);
 
     IEnumerable<Process> GetByName(string processName);
+    DateTime GetStartTimeById(int processId);
 
 }
