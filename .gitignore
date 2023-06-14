@@ -1,5 +1,5 @@
-﻿.vs
-ProcessMonitor/bin
-ProcessMonitor/obj
-ProcessMonitor.Tests/obj
+﻿ProcessMonitor/bin
 ProcessMonitor.Tests/bin
+ProcessMonitor.Tests/obj
+ProcessMonitor/obj
+.vs
