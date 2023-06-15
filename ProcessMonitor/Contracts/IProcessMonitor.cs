@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProcessMonitor.Contracts
+namespace ProcessMonitor.Contracts;
+
+public interface IProcessMonitor
 {
-    public interface IProcessMonitor
-    {
-        IEnumerable<int> Execute(string? processName, double maxLifetime);
-        bool Exceeds(DateTime startTime, double lifetime);
-    }
+    IEnumerable<int> Execute(string? processName, double maxLifetime);
+    bool Exceeds(DateTime startTime, double lifetime);
 }

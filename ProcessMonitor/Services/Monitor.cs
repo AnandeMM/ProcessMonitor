@@ -17,7 +17,7 @@ public class Monitor : IProcessMonitor
     private readonly IProcessService _processService;
     private readonly ILogger _logger;
     public Monitor(
-        IProcessService processService, 
+        IProcessService processService,
         ILogger<Monitor> logger)
     {
 
@@ -34,13 +34,13 @@ public class Monitor : IProcessMonitor
     /// <returns>The list of killed Processes</returns>
     public IEnumerable<int> Execute(string? processName, double maxLifetime)
     {
-        _logger.LogInformation( "Executing Monitor");
+        _logger.LogInformation("Executing Monitor");
         IList<int> killedProcessIds = new List<int>();
         var processeIds = _processService.GetByName(processName);
         processeIds.ToList().ForEach(pId =>
         {
             if (Exceeds(_processService.GetStartTimeById(pId), maxLifetime))
-                killedProcessIds.Add( _processService.Kill(pId));
+                killedProcessIds.Add(_processService.Kill(pId));
         });
 
         return killedProcessIds;

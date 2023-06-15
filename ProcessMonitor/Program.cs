@@ -25,11 +25,36 @@ IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
     .Build();
 
 var _processMonitor = _host.Services.GetRequiredService<IProcessMonitor>();
+CancellationTokenSource cts = new CancellationTokenSource();
 
+Console.WriteLine("Press q to Stop");
 
-var timer = new PeriodicTimer(TimeSpan.FromMinutes(monitorFrequency));
-while (await timer.WaitForNextTickAsync(CancellationToken.None))
+await Task.Run(() =>
 {
-     _processMonitor.Execute(processName, maxLifetime);
+    if (Console.ReadKey(true).KeyChar == 'q')
+        cts.Cancel();
+});
 
+
+await Start();
+cts.Dispose();
+
+async Task Start()
+{
+    var timer = new PeriodicTimer(TimeSpan.FromMinutes(monitorFrequency));
+
+    try
+    {
+
+        while (await timer.WaitForNextTickAsync(cts.Token))
+        {
+            _processMonitor.Execute(processName, maxLifetime);
+
+        }
+    }
+    catch (OperationCanceledException)
+    {
+        _processMonitor.Execute(processName, maxLifetime);
+        Console.WriteLine("Monitor was stopped");
+    }
 }
