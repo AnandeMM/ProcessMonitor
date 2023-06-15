@@ -29,7 +29,7 @@ CancellationTokenSource cts = new CancellationTokenSource();
 
 Console.WriteLine("Press q to Stop");
 
-await Task.Run(() =>
+Task task = Task.Run(() =>
 {
     if (Console.ReadKey(true).KeyChar == 'q')
         cts.Cancel();
