@@ -9,6 +9,6 @@ namespace ProcessMonitor.Contracts
     public interface IProcessMonitor
     {
         IEnumerable<int> Execute(string? processName, double maxLifetime);
-        bool ShouldBeKilled(DateTime startTime, double lifetime);
+        bool Exceeds(DateTime startTime, double lifetime);
     }
 }

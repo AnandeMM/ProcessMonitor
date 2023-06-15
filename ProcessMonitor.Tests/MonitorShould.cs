@@ -26,7 +26,7 @@ public class MonitorShould
         IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
 
         //Act
-        var shouldBeKilled = processMonitor.ShouldBeKilled(DateTime.Now.AddMinutes(-10), 5);
+        var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 5);
 
         //Assert
         Assert.That(shouldBeKilled, Is.True);
@@ -42,7 +42,7 @@ public class MonitorShould
         IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
 
         //Act
-        var shouldBeKilled = processMonitor.ShouldBeKilled(DateTime.Now.AddMinutes(-10), 15);
+        var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 15);
 
         //Assert
         Assert.That(shouldBeKilled, Is.False);
@@ -57,7 +57,7 @@ public class MonitorShould
         IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
 
         //Act
-        var shouldBeKilled = processMonitor.ShouldBeKilled(DateTime.Now.AddMinutes(-10), 10.2);
+        var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 10.2);
 
         //Assert
         Assert.That(shouldBeKilled, Is.False);

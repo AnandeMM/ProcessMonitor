@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ProcessMonitor.Services;
 
+/// <summary>
+/// A Class to Monitor the processes and Kill the ones that have exceeded a given lifetime
+/// </summary>
 public class Monitor : IProcessMonitor
 {
     IProcessService _processService;
@@ -18,22 +21,34 @@ public class Monitor : IProcessMonitor
         _processService = processService;
 
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="processName"></param>
+    /// <param name="maxLifetime"></param>
+    /// <returns>The list of killed Processes</returns>
     public IEnumerable<int> Execute(string? processName, double maxLifetime)
     {
         IList<int> killedProcessIds = new List<int>();
         var processeIds = _processService.GetByName(processName);
         processeIds.ToList().ForEach(pId =>
         {
-            if (ShouldBeKilled(_processService.GetStartTimeById(pId), maxLifetime))
+            if (Exceeds(_processService.GetStartTimeById(pId), maxLifetime))
                 killedProcessIds.Add( _processService.Kill(pId));
         });
 
         return killedProcessIds;
     }
 
-    public bool ShouldBeKilled(DateTime startTime, double lifetime)
+    /// <summary>
+    /// Checks if a given lifetime was exceeded 
+    /// </summary>
+    /// <param name="startTime"></param>
+    /// <param name="lifetime"></param>
+    /// <returns>True if the lifetime was exceeded; False otherwise</returns>
+    public bool Exceeds(DateTime startTime, double lifetime)
     {
         TimeSpan runningTime = DateTime.Now - startTime;
-        return runningTime.TotalMinutes >= lifetime;
+        return runningTime.TotalMinutes > lifetime;
     }
 }
