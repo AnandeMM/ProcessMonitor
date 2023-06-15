@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ProcessMonitor.Contracts;
 using ProcessMonitor.Services;
 using System.Net;
@@ -16,7 +17,12 @@ IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
         services.AddSingleton<IProcessService, ProcessService>();
         services.AddSingleton<IProcessMonitor, ProcessMonitor.Services.Monitor>();
     }
-    ).Build();
+    ).ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddConsole();
+    })
+    .Build();
 
 var _processMonitor = _host.Services.GetRequiredService<IProcessMonitor>();
 

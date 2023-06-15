@@ -1,8 +1,10 @@
-﻿using ProcessMonitor.Contracts;
+﻿using Microsoft.Extensions.Logging;
+using ProcessMonitor.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,11 @@ namespace ProcessMonitor.Services;
 /// </summary>
 public class ProcessService : IProcessService
 {
+    private readonly ILogger _logger;
+    public ProcessService(ILogger<ProcessService> logger)
+    {
+        _logger = logger;
+    }
 
     /// <summary>
     /// Checks if a process with a given processName is running
@@ -32,6 +39,8 @@ public class ProcessService : IProcessService
     public int Kill(int processId)
     {
         Process.GetProcessById(processId).Kill();
+        _logger.LogWarning("{ProcessId} was killed", processId);
+
         return processId;
     }
 

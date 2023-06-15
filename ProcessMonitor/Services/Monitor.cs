@@ -1,4 +1,5 @@
-﻿using ProcessMonitor.Contracts;
+﻿using Microsoft.Extensions.Logging;
+using ProcessMonitor.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,12 +14,16 @@ namespace ProcessMonitor.Services;
 /// </summary>
 public class Monitor : IProcessMonitor
 {
-    IProcessService _processService;
-    public Monitor(IProcessService processService)
+    private readonly IProcessService _processService;
+    private readonly ILogger _logger;
+    public Monitor(
+        IProcessService processService, 
+        ILogger<Monitor> logger)
     {
 
 
         _processService = processService;
+        _logger = logger;
 
     }
     /// <summary>
@@ -29,6 +34,7 @@ public class Monitor : IProcessMonitor
     /// <returns>The list of killed Processes</returns>
     public IEnumerable<int> Execute(string? processName, double maxLifetime)
     {
+        _logger.LogInformation( "Executing Monitor");
         IList<int> killedProcessIds = new List<int>();
         var processeIds = _processService.GetByName(processName);
         processeIds.ToList().ForEach(pId =>

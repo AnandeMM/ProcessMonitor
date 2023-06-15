@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using ProcessMonitor.Contracts;
 using ProcessMonitor.Services;
 using System;
@@ -22,8 +23,9 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
 
         //Act
         var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 5);
@@ -38,8 +40,9 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
 
         //Act
         var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 15);
@@ -53,8 +56,9 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
 
         //Act
         var shouldBeKilled = processMonitor.Exceeds(DateTime.Now.AddMinutes(-10), 10.2);
@@ -68,14 +72,17 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
-        processService.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
-        processService.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
-        processService.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
-        processService.Setup(ps => ps.Kill(1)).Returns(1);
-        processService.Setup(ps => ps.Kill(2)).Returns(2);
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
 
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        processServiceMock.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
+        processServiceMock.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
+        processServiceMock.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
+        processServiceMock.Setup(ps => ps.Kill(1)).Returns(1);
+        processServiceMock.Setup(ps => ps.Kill(2)).Returns(2);
+
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
+
 
         //Act
         var killedProcesses = processMonitor.Execute("test", 5);
@@ -93,15 +100,16 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
 
-        processService.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
-        processService.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
-        processService.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
-        processService.Setup(ps => ps.Kill(1)).Returns(1);
-        processService.Setup(ps => ps.Kill(2)).Returns(2);
+        processServiceMock.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
+        processServiceMock.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
+        processServiceMock.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
+        processServiceMock.Setup(ps => ps.Kill(1)).Returns(1);
+        processServiceMock.Setup(ps => ps.Kill(2)).Returns(2);
 
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
 
         //Act
         var killedProcesses = processMonitor.Execute("test", 8);
@@ -119,15 +127,16 @@ public class MonitorShould
     {
 
         //Arrange
-        Mock<IProcessService> processService = new Mock<IProcessService>();
+        var processServiceMock = new Mock<IProcessService>();
+        var loggerMock = new Mock<ILogger<Services.Monitor>>();
 
-        processService.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
-        processService.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
-        processService.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
-        processService.Setup(ps => ps.Kill(1)).Returns(1);
-        processService.Setup(ps => ps.Kill(2)).Returns(2);
+        processServiceMock.Setup(ps => ps.GetByName("test")).Returns(new List<int> { 1, 2 });
+        processServiceMock.Setup(ps => ps.GetStartTimeById(1)).Returns(DateTime.Now.AddMinutes(-10));
+        processServiceMock.Setup(ps => ps.GetStartTimeById(2)).Returns(DateTime.Now.AddMinutes(-6));
+        processServiceMock.Setup(ps => ps.Kill(1)).Returns(1);
+        processServiceMock.Setup(ps => ps.Kill(2)).Returns(2);
 
-        IProcessMonitor processMonitor = new Services.Monitor(processService.Object);
+        IProcessMonitor processMonitor = new Services.Monitor(processServiceMock.Object, loggerMock.Object);
 
         //Act
         var killedProcesses = processMonitor.Execute("test", 15);
