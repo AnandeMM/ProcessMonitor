@@ -16,15 +16,15 @@ public class ProcessService : IProcessService
         return Process.GetProcessesByName(processName).Any();
     }
 
-    public void Kill(Process process)
+    public int Kill(int processId)
     {
-        process.Kill();
-  
+        Process.GetProcessById(processId).Kill();
+        return processId;
     }
 
-    public IEnumerable<Process> GetByName(string processName) {
+    public IEnumerable<int> GetByName(string processName) {
 
-        return Process.GetProcessesByName(processName);
+        return Process.GetProcessesByName(processName).Select(process => process.Id);
     }
 
     public DateTime GetStartTimeById(int processId)
@@ -33,9 +33,5 @@ public class ProcessService : IProcessService
         return Process.GetProcessById(processId).StartTime;
     }
 
-    public bool ShouldBeKilled(DateTime startTime, double lifetime)
-    {
-        TimeSpan runningTime = DateTime.Now - startTime;
-        return runningTime.TotalMinutes >= lifetime;
-    }
+
 }

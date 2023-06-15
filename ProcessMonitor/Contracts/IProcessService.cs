@@ -10,11 +10,8 @@ namespace ProcessMonitor.Contracts;
 public interface IProcessService
 {
     bool Exists(string processName);
-    void Kill(Process process);
-
-    bool ShouldBeKilled(DateTime startTime, double lifetime);
-
-    IEnumerable<Process> GetByName(string processName);
+    int Kill(int processId);
+    IEnumerable<int> GetByName(string processName);
     DateTime GetStartTimeById(int processId);
 
 }

@@ -11,23 +11,29 @@ namespace ProcessMonitor.Services;
 public class Monitor : IProcessMonitor
 {
     IProcessService _processService;
-    public Monitor(IProcessService processService) { 
-    
+    public Monitor(IProcessService processService)
+    {
+
 
         _processService = processService;
-    
+
     }
-    public async Task Execute(string? processName, double maxLifetime, double monitorFrequency)
+    public IEnumerable<int> Execute(string? processName, double maxLifetime)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(monitorFrequency));
-        while (await timer.WaitForNextTickAsync(CancellationToken.None))
+        IList<int> killedProcessIds = new List<int>();
+        var processeIds = _processService.GetByName(processName);
+        processeIds.ToList().ForEach(pId =>
         {
-            var processes = _processService.GetByName(processName);
-            processes.ToList().ForEach(p =>
-            {
-                if (_processService.ShouldBeKilled(_processService.GetStartTimeById(p.Id), maxLifetime))
-                    _processService.Kill(p);
-            });
-        }
+            if (ShouldBeKilled(_processService.GetStartTimeById(pId), maxLifetime))
+                killedProcessIds.Add( _processService.Kill(pId));
+        });
+
+        return killedProcessIds;
+    }
+
+    public bool ShouldBeKilled(DateTime startTime, double lifetime)
+    {
+        TimeSpan runningTime = DateTime.Now - startTime;
+        return runningTime.TotalMinutes >= lifetime;
     }
 }

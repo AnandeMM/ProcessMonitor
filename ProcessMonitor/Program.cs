@@ -20,7 +20,10 @@ IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
 
 var _processMonitor = _host.Services.GetRequiredService<IProcessMonitor>();
 
-await _processMonitor.Execute(processName, maxLifetime, monitorFrequency);
 
+var timer = new PeriodicTimer(TimeSpan.FromMinutes(monitorFrequency));
+while (await timer.WaitForNextTickAsync(CancellationToken.None))
+{
+     _processMonitor.Execute(processName, maxLifetime);
 
-
+}

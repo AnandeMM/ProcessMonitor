@@ -8,6 +8,7 @@ namespace ProcessMonitor.Contracts
 {
     public interface IProcessMonitor
     {
-        Task Execute(string? processName, double maxLifetime, double monitorFrequency);
+        IEnumerable<int> Execute(string? processName, double maxLifetime);
+        bool ShouldBeKilled(DateTime startTime, double lifetime);
     }
 }
